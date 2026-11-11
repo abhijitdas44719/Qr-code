@@ -3,69 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QR Code Generator with Logo + Generate Button</title>
+<title>QR Code Generator - Working</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Segoe UI', system-ui, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    padding: 20px;
-    color: #2d3748;
+    min-height: 100vh; padding: 20px; color: #2d3748;
   }
   .container {
-    max-width: 1150px;
-    margin: 0 auto;
-    background: #fff;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-width: 1150px; margin: 0 auto; background: #fff;
+    border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     overflow: hidden;
   }
   header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    padding: 22px 30px;
-    text-align: center;
+    color: #fff; padding: 22px 30px; text-align: center;
   }
   header h1 { font-size: 1.7rem; margin-bottom: 4px; }
   header p { opacity: 0.9; font-size: 0.88rem; }
   .main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 25px;
-    padding: 25px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 25px; padding: 25px;
   }
   @media (max-width: 900px) { .main { grid-template-columns: 1fr; } }
   .panel-title {
-    font-weight: 700;
-    color: #4a5568;
-    margin-bottom: 12px;
-    font-size: 1.05rem;
-    border-left: 4px solid #667eea;
-    padding-left: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-weight: 700; color: #4a5568; margin-bottom: 12px;
+    font-size: 1.05rem; border-left: 4px solid #667eea;
+    padding-left: 10px; display: flex; align-items: center; gap: 8px;
   }
-  .tabs {
-    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px;
-  }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
   .tab {
-    padding: 7px 13px;
-    background: #edf2f7;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #4a5568;
-    transition: all 0.2s;
+    padding: 7px 13px; background: #edf2f7; border: none;
+    border-radius: 8px; cursor: pointer; font-size: 0.82rem;
+    font-weight: 600; color: #4a5568; transition: all 0.2s;
   }
   .tab:hover { background: #e2e8f0; }
   .tab.active {
-    background: #667eea;
-    color: #fff;
+    background: #667eea; color: #fff;
     box-shadow: 0 4px 12px rgba(102,126,234,0.4);
   }
   .form-group { margin-bottom: 12px; }
@@ -74,47 +50,33 @@
     font-weight: 600; font-size: 0.83rem; color: #4a5568;
   }
   .form-group input:not([type=color]):not([type=range]):not([type=checkbox]),
-  .form-group select,
-  .form-group textarea {
-    width: 100%;
-    padding: 9px 11px;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.88rem;
-    font-family: inherit;
-    transition: border-color 0.2s;
-    background: #fff;
+  .form-group select, .form-group textarea {
+    width: 100%; padding: 9px 11px;
+    border: 2px solid #e2e8f0; border-radius: 8px;
+    font-size: 0.88rem; font-family: inherit;
+    transition: border-color 0.2s; background: #fff;
   }
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-    outline: none;
-    border-color: #667eea;
+    outline: none; border-color: #667eea;
   }
   .form-group textarea { resize: vertical; min-height: 65px; }
   .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .section-box {
-    background: #f7fafc;
-    padding: 14px;
-    border-radius: 10px;
-    margin-bottom: 14px;
-    border: 1px solid #e2e8f0;
+    background: #f7fafc; padding: 14px; border-radius: 10px;
+    margin-bottom: 14px; border: 1px solid #e2e8f0;
   }
   .logo-upload {
-    display: block;
-    border: 2px dashed #cbd5e0;
-    border-radius: 10px;
-    padding: 14px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: #f7fafc;
+    display: block; border: 2px dashed #cbd5e0;
+    border-radius: 10px; padding: 14px; text-align: center;
+    cursor: pointer; transition: all 0.2s; background: #f7fafc;
   }
   .logo-upload:hover { border-color: #667eea; background: #edf2f7; }
   .logo-upload input { display: none; }
   .logo-upload.dragover { border-color: #667eea; background: #e6efff; }
   .logo-preview {
     display: flex; align-items: center; gap: 10px;
-    margin-top: 10px; padding: 8px;
-    background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;
+    margin-top: 10px; padding: 8px; background: #fff;
+    border-radius: 8px; border: 1px solid #e2e8f0;
   }
   .logo-preview img {
     width: 42px; height: 42px; object-fit: contain;
@@ -132,14 +94,12 @@
     display: flex; flex-direction: column; align-items: center;
     background: #f7fafc; border-radius: 15px; padding: 22px;
     border: 2px solid #e2e8f0; min-height: 400px;
-    position: sticky; top: 20px;
   }
-  #qrCanvas {
-    max-width: 100%; height: auto;
-    border-radius: 10px;
+  #qrOutput {
+    max-width: 100%; height: auto; border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-    background: #fff;
-    image-rendering: pixelated;
+    background: #fff; image-rendering: pixelated;
+    display: block;
   }
   .placeholder {
     display: flex; flex-direction: column; align-items: center;
@@ -157,44 +117,30 @@
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-primary {
     background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+    color: #fff; box-shadow: 0 4px 15px rgba(102,126,234,0.4);
   }
   .btn-primary:hover:not(:disabled) { transform: translateY(-2px); }
   .btn-success {
     background: linear-gradient(135deg, #48bb78, #38a169);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(72,187,120,0.4);
+    color: #fff; box-shadow: 0 4px 15px rgba(72,187,120,0.4);
   }
   .btn-success:hover:not(:disabled) { transform: translateY(-2px); }
   .btn-secondary { background: #edf2f7; color: #4a5568; }
   .btn-secondary:hover:not(:disabled) { background: #e2e8f0; }
 
-  /* GENERATE BUTTON — big & prominent */
   .btn-generate {
-    width: 100%;
-    padding: 16px 20px;
-    border: none;
+    width: 100%; padding: 16px 20px; border: none;
     border-radius: 12px;
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: #fff;
-    font-size: 1.05rem;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(245,87,108,0.4);
-    transition: all 0.2s;
-    margin-bottom: 15px;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+    color: #fff; font-size: 1.05rem; font-weight: 800;
+    cursor: pointer; box-shadow: 0 6px 20px rgba(245,87,108,0.4);
+    transition: all 0.2s; margin-bottom: 15px;
+    letter-spacing: 0.5px; display: flex;
+    align-items: center; justify-content: center; gap: 10px;
   }
   .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(245,87,108,0.55); }
   .btn-generate:active { transform: translateY(0); }
-  .btn-generate.pulse {
-    animation: genPulse 1.5s infinite;
-  }
+  .btn-generate.pulse { animation: genPulse 1.5s infinite; }
   @keyframes genPulse {
     0%,100% { box-shadow: 0 6px 20px rgba(245,87,108,0.4); }
     50% { box-shadow: 0 6px 30px rgba(245,87,108,0.75); }
@@ -202,8 +148,7 @@
 
   .color-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .color-options input[type="color"] {
-    width: 100%; height: 42px;
-    border: 2px solid #e2e8f0;
+    width: 100%; height: 42px; border: 2px solid #e2e8f0;
     border-radius: 8px; cursor: pointer; padding: 2px; background: #fff;
   }
   .hint { font-size: 0.73rem; color: #718096; margin-top: 4px; }
@@ -215,76 +160,59 @@
     font-size: 0.8rem; font-weight: 700; color: #667eea;
   }
   .checkbox-line { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
-
-  /* LIVE TOGGLE */
   .mode-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #f7fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-bottom: 15px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: #f7fafc; border: 1px solid #e2e8f0;
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 15px;
   }
   .mode-toggle .mode-label {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #4a5568;
+    font-size: 0.85rem; font-weight: 700; color: #4a5568;
     display: flex; align-items: center; gap: 8px;
   }
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 48px; height: 26px;
-  }
+  .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
   .switch input { opacity: 0; width: 0; height: 0; }
   .slider {
-    position: absolute; cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #cbd5e0;
-    transition: 0.3s;
-    border-radius: 26px;
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #cbd5e0; transition: 0.3s; border-radius: 26px;
   }
   .slider:before {
-    position: absolute; content: "";
-    height: 20px; width: 20px;
-    left: 3px; bottom: 3px;
-    background-color: white;
-    transition: 0.3s;
-    border-radius: 50%;
+    position: absolute; content: ""; height: 20px; width: 20px;
+    left: 3px; bottom: 3px; background-color: white;
+    transition: 0.3s; border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
   .switch input:checked + .slider { background-color: #48bb78; }
   .switch input:checked + .slider:before { transform: translateX(22px); }
   .mode-status {
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 20px;
-    text-transform: uppercase;
+    font-size: 0.72rem; font-weight: 700; padding: 3px 10px;
+    border-radius: 20px; text-transform: uppercase;
   }
   .mode-status.live { background: #c6f6d5; color: #22543d; }
   .mode-status.manual { background: #fed7d7; color: #742a2a; }
-  .live-badge {
-    display: inline-block; background: #48bb78; color: #fff;
-    font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
-    border-radius: 20px; animation: pulse 1.5s infinite;
+  .error-box {
+    width: 100%; background: #fed7d7; color: #742a2a;
+    padding: 10px 14px; border-radius: 8px;
+    font-size: 0.85rem; margin-bottom: 10px;
+    border-left: 4px solid #e53e3e;
   }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .success-box {
+    width: 100%; background: #c6f6d5; color: #22543d;
+    padding: 8px 14px; border-radius: 8px;
+    font-size: 0.82rem; margin-top: 10px;
+    text-align: center;
+  }
 </style>
 </head>
 <body>
 <div class="container">
   <header>
     <h1>🔳 QR Code Generator</h1>
-    <p>Type karo • Generate button dabao • Logo lagao • Download karo</p>
+    <p>Data bharo → Generate dabao → Logo lagao → Download karo</p>
   </header>
 
   <div class="main">
     <!-- LEFT -->
     <div>
-      <!-- MODE TOGGLE -->
       <div class="mode-toggle">
         <div class="mode-label">
           <span>⚡ Live Mode</span>
@@ -310,7 +238,7 @@
       <div class="type-fields" id="type-text">
         <div class="form-group">
           <label>Text / Message</label>
-          <textarea id="textInput" placeholder="Yahan likho... phir Generate dabao">Hello World 👋</textarea>
+          <textarea id="textInput" placeholder="Yahan likho...">Hello World 👋</textarea>
         </div>
       </div>
 
@@ -407,7 +335,6 @@
         </div>
       </div>
 
-      <!-- LOGO -->
       <div class="section-box">
         <div class="panel-title" style="margin-bottom:10px;">🖼️ Logo (Beech Mein)</div>
         <label class="logo-upload" id="logoUploadArea">
@@ -415,7 +342,7 @@
           <div id="uploadPrompt">
             <div style="font-size:1.8rem;">📁</div>
             <div style="font-weight:600;color:#4a5568;margin-top:4px;font-size:0.9rem;">Click ya Drag & Drop Logo</div>
-            <div class="hint">PNG, JPG, SVG, GIF, WebP — sab chalega</div>
+            <div class="hint">PNG, JPG, SVG, GIF, WebP</div>
           </div>
         </label>
         <div id="logoPreview" class="logo-preview hidden">
@@ -440,11 +367,9 @@
             <input type="range" id="logoPadRange" min="0" max="20" value="6" step="1">
             <span class="range-val" id="logoPadLabel">6px</span>
           </div>
-          <div class="hint">Padding jyada = scanning safe</div>
         </div>
       </div>
 
-      <!-- OPTIONS -->
       <div class="section-box">
         <div class="panel-title" style="margin-bottom:10px;">⚙️ Customize</div>
         <div class="form-group">
@@ -465,24 +390,24 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Error Correction (logo ke saath H)</label>
+          <label>Error Correction</label>
           <select id="errorLevel">
             <option value="L">L - Low (7%)</option>
             <option value="M">M - Medium (15%)</option>
             <option value="Q">Q - Quartile (25%)</option>
-            <option value="H" selected>H - High (30%) ✓ Recommended</option>
+            <option value="H" selected>H - High (30%) ✓</option>
           </select>
         </div>
         <div class="form-group">
           <label>Corner / Eye Style</label>
           <select id="eyeStyle">
-            <option value="square">Square (default)</option>
+            <option value="square">Square</option>
             <option value="dot">Dots</option>
             <option value="rounded">Rounded</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Dot Style (data pattern)</label>
+          <label>Dot Style</label>
           <select id="dotStyle">
             <option value="square">Square</option>
             <option value="dot">Dots</option>
@@ -494,27 +419,29 @@
 
     <!-- RIGHT -->
     <div>
-      <div class="panel-title">
-        Live Preview
-        <span id="liveBadge" class="live-badge hidden">LIVE</span>
-      </div>
+      <div class="panel-title">Live Preview</div>
 
-      <!-- GENERATE BUTTON -->
       <button class="btn-generate pulse" id="generateBtn" type="button">
         ✨ Generate QR Code
       </button>
 
       <div class="qr-preview">
+        <div id="errorBox" class="error-box hidden"></div>
+
         <div id="placeholder" class="placeholder">
           <div style="font-size:3rem;opacity:0.4;">🔳</div>
           <p style="margin-top:10px;">Data bharo, phir <b>Generate</b> dabao</p>
         </div>
-        <canvas id="qrCanvas" class="hidden"></canvas>
-        <div class="options" id="downloadOptions" style="display:none;">
+
+        <img id="qrOutput" class="hidden" alt="QR Code">
+
+        <div class="options hidden" id="downloadOptions">
           <button class="btn btn-success" id="downloadPng" type="button">⬇️ PNG</button>
           <button class="btn btn-secondary" id="downloadJpg" type="button">⬇️ JPG</button>
           <button class="btn btn-primary" id="downloadSvg" type="button">⬇️ SVG</button>
         </div>
+
+        <div id="successBox" class="success-box hidden">✅ QR ready! Download karo.</div>
       </div>
     </div>
   </div>
@@ -524,38 +451,53 @@
 (function() {
   'use strict';
 
+  // ---------- STATE ----------
   let currentType = 'text';
   let logoImage = null;
   let logoDataUrl = null;
   let logoFileName = '';
   let logoFileSize = 0;
-  let renderToken = 0;
   let liveMode = false;
+  let isGenerating = false;
 
+  // ---------- DOM ----------
   const $ = id => document.getElementById(id);
-  const qrCanvas = $('qrCanvas');
+  const qrOutput = $('qrOutput');
   const placeholder = $('placeholder');
   const downloadOptions = $('downloadOptions');
+  const errorBox = $('errorBox');
+  const successBox = $('successBox');
   const liveToggle = $('liveToggle');
-  const liveBadge = $('liveBadge');
   const modeStatus = $('modeStatus');
   const generateBtn = $('generateBtn');
 
-  // ---------- LIVE / MANUAL MODE ----------
+  // ---------- ERROR/SUCCESS HELPERS ----------
+  function showError(msg) {
+    errorBox.textContent = '⚠️ ' + msg;
+    errorBox.classList.remove('hidden');
+    successBox.classList.add('hidden');
+  }
+  function clearError() {
+    errorBox.classList.add('hidden');
+  }
+  function showSuccess() {
+    successBox.classList.remove('hidden');
+    setTimeout(() => successBox.classList.add('hidden'), 3000);
+  }
+
+  // ---------- LIVE MODE ----------
   liveToggle.addEventListener('change', () => {
     liveMode = liveToggle.checked;
     if (liveMode) {
       modeStatus.textContent = 'Live';
       modeStatus.classList.remove('manual');
       modeStatus.classList.add('live');
-      liveBadge.classList.remove('hidden');
       generateBtn.classList.add('hidden');
-      updateQR(); // generate immediately
+      generateNow();
     } else {
       modeStatus.textContent = 'Manual';
       modeStatus.classList.remove('live');
       modeStatus.classList.add('manual');
-      liveBadge.classList.add('hidden');
       generateBtn.classList.remove('hidden');
     }
   });
@@ -568,7 +510,7 @@
       currentType = tab.dataset.type;
       document.querySelectorAll('.type-fields').forEach(f => f.classList.add('hidden'));
       $('type-' + currentType).classList.remove('hidden');
-      if (liveMode) updateQR();
+      if (liveMode) generateNow();
     });
   });
 
@@ -576,14 +518,15 @@
   function buildQRData() {
     switch (currentType) {
       case 'text':
-        return $('textInput').value || ' ';
+        return ($('textInput').value || '').trim();
       case 'url': {
         let u = $('urlInput').value.trim();
         if (u && !/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(u)) u = 'https://' + u;
-        return u || ' ';
+        return u;
       }
       case 'wifi': {
-        const ssid = $('wifiSSID').value || ' ';
+        const ssid = $('wifiSSID').value.trim();
+        if (!ssid) return '';
         const enc = $('wifiEnc').value;
         const pass = $('wifiPass').value;
         const hidden = $('wifiHidden').checked;
@@ -596,9 +539,9 @@
       }
       case 'email': {
         const to = $('emailTo').value.trim();
+        if (!to) return '';
         const subj = $('emailSubj').value;
         const body = $('emailBody').value;
-        if (!to) return ' ';
         let s = `mailto:${to}`;
         const p = [];
         if (subj) p.push('subject=' + encodeURIComponent(subj));
@@ -608,21 +551,22 @@
       }
       case 'phone': {
         const n = $('phoneNum').value.trim();
-        return n ? `tel:${n}` : ' ';
+        return n ? `tel:${n}` : '';
       }
       case 'sms': {
         const n = $('smsNum').value.trim();
+        if (!n) return '';
         const m = $('smsMsg').value;
-        if (!n) return ' ';
         return m ? `smsto:${n}:${m}` : `smsto:${n}`;
       }
       case 'vcard': {
-        const first = $('vcFirst').value;
-        const last = $('vcLast').value;
-        const phone = $('vcPhone').value;
-        const email = $('vcEmail').value;
-        const org = $('vcOrg').value;
-        const url = $('vcUrl').value;
+        const first = $('vcFirst').value.trim();
+        const last = $('vcLast').value.trim();
+        const phone = $('vcPhone').value.trim();
+        const email = $('vcEmail').value.trim();
+        const org = $('vcOrg').value.trim();
+        const url = $('vcUrl').value.trim();
+        if (!first && !last && !phone && !email) return '';
         const full = [first, last].filter(Boolean).join(' ') || 'Contact';
         const L = ['BEGIN:VCARD', 'VERSION:3.0', `FN:${full}`, `N:${last};${first};;;`];
         if (phone) L.push(`TEL;TYPE=CELL:${phone}`);
@@ -633,153 +577,153 @@
         return L.join('\n');
       }
     }
-    return ' ';
+    return '';
   }
 
-  // ---------- MAIN RENDER ----------
-  function updateQR() {
-    const data = buildQRData();
+  // ---------- MAIN GENERATE ----------
+  function generateNow() {
+    if (isGenerating) return;
+    isGenerating = true;
+    clearError();
 
-    if (!data || !data.trim()) {
-      placeholder.classList.remove('hidden');
-      placeholder.querySelector('p').innerHTML = 'Data bharo, phir <b>Generate</b> dabao';
-      qrCanvas.classList.add('hidden');
-      downloadOptions.style.display = 'none';
-      return;
-    }
+    try {
+      const data = buildQRData();
 
-    const size = parseInt($('qrSize').value) || 500;
-    const fg = $('fgColor').value;
-    const bg = $('bgColor').value;
-    const level = $('errorLevel').value;
-
-    $('downloadPng').disabled = true;
-    $('downloadJpg').disabled = true;
-    $('downloadSvg').disabled = true;
-
-    const myToken = ++renderToken;
-    const effLevel = logoImage ? (level === 'L' || level === 'M' ? 'Q' : 'H') : level;
-
-    QRCode.toCanvas(qrCanvas, data, {
-      width: size,
-      margin: 2,
-      color: { dark: fg, light: bg },
-      errorCorrectionLevel: effLevel
-    }, function(err) {
-      if (myToken !== renderToken) return;
-      if (err) {
-        console.error(err);
+      if (!data) {
+        showError('Pehle data bharo — kuch text ya details daalo.');
+        placeholder.classList.remove('hidden');
+        qrOutput.classList.add('hidden');
+        downloadOptions.classList.add('hidden');
+        isGenerating = false;
         return;
       }
 
-      placeholder.classList.add('hidden');
-      qrCanvas.classList.remove('hidden');
-      downloadOptions.style.display = 'flex';
+      if (typeof QRCode === 'undefined') {
+        showError('QR library load nahi hui. Internet check karo aur page refresh karo.');
+        isGenerating = false;
+        return;
+      }
 
-      if (logoImage) drawLogo(qrCanvas, logoImage);
-      applyStyleExtras(qrCanvas);
+      const size = parseInt($('qrSize').value) || 500;
+      const fg = $('fgColor').value || '#000000';
+      const bg = $('bgColor').value || '#ffffff';
+      const level = logoImage ? 'H' : ($('errorLevel').value || 'H');
 
-      $('downloadPng').disabled = false;
-      $('downloadJpg').disabled = false;
-      $('downloadSvg').disabled = false;
+      // STEP 1: Generate raw QR to a temp canvas using toCanvas on offscreen canvas
+      const tempCanvas = document.createElement('canvas');
 
-      // remove pulse after first generate
-      generateBtn.classList.remove('pulse');
-    });
-  }
+      QRCode.toCanvas(tempCanvas, data, {
+        width: size,
+        margin: 2,
+        color: { dark: fg, light: bg },
+        errorCorrectionLevel: level
+      }, function(err) {
+        if (err) {
+          console.error('QR Error:', err);
+          showError('QR generate nahi hua: ' + (err.message || err));
+          isGenerating = false;
+          return;
+        }
 
-  // ---------- GENERATE BUTTON ----------
-  generateBtn.addEventListener('click', () => {
-    updateQR();
-    // small feedback
-    generateBtn.style.transform = 'scale(0.97)';
-    setTimeout(() => generateBtn.style.transform = '', 120);
-  });
+        try {
+          // STEP 2: Apply style extras (rounded/dots) on temp canvas
+          const finalCanvas = applyStyles(tempCanvas, fg, bg);
 
-  // ---------- LOGO ----------
-  function drawLogo(canvas, img) {
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width;
-    const pct = parseInt($('logoSizeRange').value) / 100;
-    const pad = parseInt($('logoPadRange').value);
-    const maxDim = W * pct;
+          // STEP 3: Draw logo on final canvas
+          if (logoImage) {
+            drawLogo(finalCanvas, logoImage);
+          }
 
-    const ar = (img.width || 1) / (img.height || 1);
-    let lw, lh;
-    if (ar >= 1) { lw = maxDim; lh = maxDim / ar; }
-    else { lh = maxDim; lw = maxDim * ar; }
+          // STEP 4: Convert to data URL and show in <img>
+          const dataUrl = finalCanvas.toDataURL('image/png');
+          qrOutput.src = dataUrl;
+          qrOutput.classList.remove('hidden');
+          placeholder.classList.add('hidden');
+          downloadOptions.classList.remove('hidden');
 
-    const lx = (W - lw) / 2;
-    const ly = (W - lh) / 2;
+          // store for download
+          window.__lastQRCanvas = finalCanvas;
 
-    if (pad > 0) {
-      const bgSize = Math.max(lw, lh) + pad * 2;
-      const bgX = (W - bgSize) / 2;
-      const bgY = (W - bgSize) / 2;
-      roundRect(ctx, bgX, bgY, bgSize, bgSize, Math.min(12, pad + 2));
-      ctx.fillStyle = '#ffffff';
-      ctx.fill();
+          showSuccess();
+          generateBtn.classList.remove('pulse');
+        } catch (e) {
+          console.error('Post-process error:', e);
+          // fallback: show plain QR
+          try {
+            const fallback = tempCanvas.toDataURL('image/png');
+            qrOutput.src = fallback;
+            qrOutput.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+            downloadOptions.classList.remove('hidden');
+            window.__lastQRCanvas = tempCanvas;
+            showError('Style apply nahi hua, plain QR dikhaya.');
+          } catch (e2) {
+            showError('QR ban gaya par display fail: ' + e2.message);
+          }
+        } finally {
+          isGenerating = false;
+        }
+      });
+    } catch (e) {
+      console.error('Generate error:', e);
+      showError('Error: ' + e.message);
+      isGenerating = false;
     }
-    ctx.drawImage(img, lx, ly, lw, lh);
   }
 
-  function roundRect(ctx, x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    ctx.lineTo(x + r, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
-    ctx.closePath();
-  }
-
-  // ---------- STYLE EXTRAS ----------
-  function applyStyleExtras(canvas) {
+  // ---------- STYLE APPLY ----------
+  function applyStyles(srcCanvas, fg, bg) {
     const eyeStyle = $('eyeStyle').value;
     const dotStyle = $('dotStyle').value;
-    if (eyeStyle === 'square' && dotStyle === 'square') return;
 
-    const W = canvas.width;
-    const ctx = canvas.getContext('2d');
-    const imgData = ctx.getImageData(0, 0, W, W);
-    const src = imgData.data;
+    if (eyeStyle === 'square' && dotStyle === 'square') {
+      return srcCanvas;
+    }
 
-    // detect module size
+    const W = srcCanvas.width;
+    const out = document.createElement('canvas');
+    out.width = W;
+    out.height = W;
+    const ctx = out.getContext('2d');
+
+    const srcCtx = srcCanvas.getContext('2d');
+    const srcData = srcCtx.getImageData(0, 0, W, W).data;
+
+    // detect module size from top-left finder pattern
+    // scan a horizontal line at y = 10% of W
     let mod = 0;
     const scanY = Math.floor(W * 0.1);
     let runStart = -1;
     for (let x = 0; x < W; x++) {
       const idx = (scanY * W + x) * 4;
-      const dark = src[idx] < 128;
+      const dark = srcData[idx] < 128;
       if (dark && runStart === -1) runStart = x;
       if (!dark && runStart !== -1) {
         const run = x - runStart;
-        if (run > 2 && run < W / 10) { mod = run; break; }
+        if (run > 2 && run < W / 8) { mod = run; break; }
         runStart = -1;
       }
     }
-    if (mod < 2) return;
+    if (mod < 3) return srcCanvas;
 
     const margin = 2 * mod;
     const gridSize = Math.round((W - 2 * margin) / mod);
-    if (gridSize < 10 || gridSize > 200) return;
+    if (gridSize < 10 || gridSize > 200) return srcCanvas;
 
+    // read grid
     const grid = [];
     for (let row = 0; row < gridSize; row++) {
       const r = [];
       for (let col = 0; col < gridSize; col++) {
-        const px = margin + col * mod + mod / 2;
-        const py = margin + row * mod + mod / 2;
-        const idx = (Math.floor(py) * W + Math.floor(px)) * 4;
-        r.push(src[idx] < 128 ? 1 : 0);
+        const px = Math.floor(margin + col * mod + mod / 2);
+        const py = Math.floor(margin + row * mod + mod / 2);
+        const idx = (py * W + px) * 4;
+        r.push(srcData[idx] < 128 ? 1 : 0);
       }
       grid.push(r);
     }
 
+    // logo skip zone
     let skipL = -1, skipR = -1, skipT = -1, skipB = -1;
     if (logoImage) {
       const pct = parseInt($('logoSizeRange').value) / 100;
@@ -791,16 +735,17 @@
       skipB = (W + logoSize) / 2;
     }
 
-    const isFinder = (r, c) => (
+    const isFinder = (r, c) =>
       (r < 7 && c < 7) ||
       (r < 7 && c >= gridSize - 7) ||
-      (r >= gridSize - 7 && c < 7)
-    );
+      (r >= gridSize - 7 && c < 7);
 
-    ctx.fillStyle = $('bgColor').value;
+    // fill background
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, W);
-    ctx.fillStyle = $('fgColor').value;
 
+    // draw data modules
+    ctx.fillStyle = fg;
     const radius = dotStyle === 'rounded' ? mod * 0.35 : 0;
 
     for (let row = 0; row < gridSize; row++) {
@@ -827,11 +772,27 @@
       }
     }
 
+    // draw eyes
     [[0, 0], [0, gridSize - 7], [gridSize - 7, 0]].forEach(([r0, c0]) => {
-      drawEye(ctx, margin, mod, r0, c0, eyeStyle, $('fgColor').value, $('bgColor').value);
+      drawEye(ctx, margin, mod, r0, c0, eyeStyle, fg, bg);
     });
 
-    if (logoImage) drawLogo(canvas, logoImage);
+    return out;
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
   }
 
   function drawEye(ctx, margin, mod, r0, c0, style, fg, bg) {
@@ -850,36 +811,68 @@
     }
 
     const rounded = style === 'rounded';
-    const r1 = rounded ? S * 0.15 : S / 2;
-    const r2 = rounded ? (S - 2 * mod) * 0.15 : (S - 2 * mod) / 2;
-    const r3 = rounded ? (3 * mod) * 0.15 : (3 * mod) / 2;
 
+    // outer
     ctx.fillStyle = fg;
-    if (rounded) roundRect(ctx, x, y, S, S, r1);
-    else { ctx.beginPath(); ctx.arc(x + S / 2, y + S / 2, S / 2, 0, Math.PI * 2); }
+    if (rounded) roundRect(ctx, x, y, S, S, S * 0.15);
+    else { ctx.beginPath(); ctx.arc(x + S/2, y + S/2, S/2, 0, Math.PI * 2); }
     ctx.fill();
 
+    // middle white
     ctx.fillStyle = bg;
-    if (rounded) roundRect(ctx, x + mod, y + mod, S - 2 * mod, S - 2 * mod, r2);
-    else { ctx.beginPath(); ctx.arc(x + S / 2, y + S / 2, (S - 2 * mod) / 2, 0, Math.PI * 2); }
+    if (rounded) roundRect(ctx, x + mod, y + mod, S - 2*mod, S - 2*mod, (S - 2*mod) * 0.15);
+    else { ctx.beginPath(); ctx.arc(x + S/2, y + S/2, (S - 2*mod)/2, 0, Math.PI * 2); }
     ctx.fill();
 
+    // inner dark
     ctx.fillStyle = fg;
-    if (rounded) roundRect(ctx, x + 2 * mod, y + 2 * mod, 3 * mod, 3 * mod, r3);
-    else { ctx.beginPath(); ctx.arc(x + S / 2, y + S / 2, (3 * mod) / 2, 0, Math.PI * 2); }
+    if (rounded) roundRect(ctx, x + 2*mod, y + 2*mod, 3*mod, 3*mod, 3*mod * 0.15);
+    else { ctx.beginPath(); ctx.arc(x + S/2, y + S/2, (3*mod)/2, 0, Math.PI * 2); }
     ctx.fill();
   }
 
-  // ---------- LIVE BINDING (only active in live mode) ----------
+  // ---------- LOGO DRAW ----------
+  function drawLogo(canvas, img) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const pct = parseInt($('logoSizeRange').value) / 100;
+    const pad = parseInt($('logoPadRange').value);
+    const maxDim = W * pct;
+
+    const ar = (img.naturalWidth || img.width || 1) / (img.naturalHeight || img.height || 1);
+    let lw, lh;
+    if (ar >= 1) { lw = maxDim; lh = maxDim / ar; }
+    else { lh = maxDim; lw = maxDim * ar; }
+
+    const lx = (W - lw) / 2;
+    const ly = (W - lh) / 2;
+
+    if (pad > 0) {
+      const bgSize = Math.max(lw, lh) + pad * 2;
+      const bgX = (W - bgSize) / 2;
+      const bgY = (W - bgSize) / 2;
+      ctx.fillStyle = '#ffffff';
+      roundRect(ctx, bgX, bgY, bgSize, bgSize, Math.min(12, pad + 2));
+      ctx.fill();
+    }
+
+    ctx.drawImage(img, lx, ly, lw, lh);
+  }
+
+  // ---------- GENERATE BUTTON ----------
+  generateBtn.addEventListener('click', () => {
+    generateNow();
+  });
+
+  // ---------- LIVE BINDING ----------
   function scheduleIfLive() {
-    if (liveMode) updateQR();
+    if (liveMode) generateNow();
   }
 
   document.querySelectorAll('.type-fields input, .type-fields textarea, .type-fields select')
     .forEach(el => {
       el.addEventListener('input', scheduleIfLive);
       el.addEventListener('change', scheduleIfLive);
-      el.addEventListener('keyup', scheduleIfLive);
     });
 
   ['qrSize', 'fgColor', 'bgColor', 'errorLevel', 'eyeStyle', 'dotStyle', 'logoSizeRange', 'logoPadRange']
@@ -891,7 +884,6 @@
       }
     });
 
-  // labels
   $('qrSize').addEventListener('input', () => { $('qrSizeLabel').textContent = $('qrSize').value; });
   $('logoSizeRange').addEventListener('input', () => { $('logoSizeLabel').textContent = $('logoSizeRange').value + '%'; });
   $('logoPadRange').addEventListener('input', () => { $('logoPadLabel').textContent = $('logoPadRange').value + 'px'; });
@@ -900,11 +892,11 @@
   function handleLogoFile(file) {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      alert('Image file select karo.');
+      showError('Sirf image file (PNG/JPG/SVG/GIF/WebP) select karo.');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      alert('Max 5MB allowed.');
+      showError('Max 5MB allowed.');
       return;
     }
 
@@ -921,10 +913,11 @@
         $('logoName').textContent = logoFileName;
         $('logoSize').textContent = formatBytes(logoFileSize);
         $('logoPreview').classList.remove('hidden');
-        if (liveMode) updateQR();
-        else if (!qrCanvas.classList.contains('hidden')) updateQR(); // refresh existing
+        if (!qrOutput.classList.contains('hidden') || liveMode) {
+          generateNow();
+        }
       };
-      img.onerror = () => alert('Image load nahi hui.');
+      img.onerror = () => showError('Image load nahi hui. Doosri file try karo.');
       img.src = logoDataUrl;
     };
     reader.readAsDataURL(file);
@@ -964,27 +957,29 @@
     $('logoInput').value = '';
     $('logoPreview').classList.add('hidden');
     $('logoImg').src = '';
-    if (!qrCanvas.classList.contains('hidden')) updateQR();
+    if (!qrOutput.classList.contains('hidden') || liveMode) generateNow();
   });
 
   // ---------- DOWNLOADS ----------
   $('downloadPng').addEventListener('click', () => {
-    if (qrCanvas.classList.contains('hidden')) return;
+    const canvas = window.__lastQRCanvas;
+    if (!canvas) return;
     const a = document.createElement('a');
     a.download = 'qr-code-' + Date.now() + '.png';
-    a.href = qrCanvas.toDataURL('image/png');
+    a.href = canvas.toDataURL('image/png');
     a.click();
   });
 
   $('downloadJpg').addEventListener('click', () => {
-    if (qrCanvas.classList.contains('hidden')) return;
+    const canvas = window.__lastQRCanvas;
+    if (!canvas) return;
     const tmp = document.createElement('canvas');
-    tmp.width = qrCanvas.width;
-    tmp.height = qrCanvas.height;
+    tmp.width = canvas.width;
+    tmp.height = canvas.height;
     const c = tmp.getContext('2d');
     c.fillStyle = $('bgColor').value;
     c.fillRect(0, 0, tmp.width, tmp.height);
-    c.drawImage(qrCanvas, 0, 0);
+    c.drawImage(canvas, 0, 0);
     const a = document.createElement('a');
     a.download = 'qr-code-' + Date.now() + '.jpg';
     a.href = tmp.toDataURL('image/jpeg', 0.95);
@@ -992,10 +987,11 @@
   });
 
   $('downloadSvg').addEventListener('click', () => {
-    if (qrCanvas.classList.contains('hidden')) return;
-    const dataUrl = qrCanvas.toDataURL('image/png');
-    const W = qrCanvas.width;
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${W}" viewBox="0 0 ${W} ${W}"><image href="${dataUrl}" width="${W}" height="${W}"/></svg>`;
+    const canvas = window.__lastQRCanvas;
+    if (!canvas) return;
+    const dataUrl = canvas.toDataURL('image/png');
+    const W = canvas.width;
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + W + '" viewBox="0 0 ' + W + ' ' + W + '"><image href="' + dataUrl + '" width="' + W + '" height="' + W + '"/></svg>';
     const blob = new Blob([svg], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1009,9 +1005,6 @@
   $('qrSizeLabel').textContent = $('qrSize').value;
   $('logoSizeLabel').textContent = $('logoSizeRange').value + '%';
   $('logoPadLabel').textContent = $('logoPadRange').value + 'px';
-
-  // Show placeholder until generate clicked
-  placeholder.querySelector('p').innerHTML = 'Data bharo, phir <b>Generate</b> dabao';
 
 })();
 </script>
