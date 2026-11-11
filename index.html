@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QR Code Generator - Working</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<title>QR 1 Code Generator - Fixed</title>
+<!-- Rock solid browser QR library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -201,9 +202,13 @@
     font-size: 0.82rem; margin-top: 10px;
     text-align: center;
   }
+  #hiddenQrContainer { position: absolute; left: -9999px; top: -9999px; }
 </style>
 </head>
 <body>
+<!-- Hidden container for offscreen rendering -->
+<div id="hiddenQrContainer"></div>
+
 <div class="container">
   <header>
     <h1>🔳 QR Code Generator</h1>
@@ -375,7 +380,7 @@
         <div class="form-group">
           <label>QR Size (px)</label>
           <div class="range-row">
-            <input type="range" id="qrSize" min="150" max="1200" value="500" step="50">
+            <input type="range" id="qrSize" min="200" max="1000" value="500" step="50">
             <span class="range-val" id="qrSizeLabel">500</span>
           </div>
         </div>
@@ -451,16 +456,13 @@
 (function() {
   'use strict';
 
-  // ---------- STATE ----------
   let currentType = 'text';
   let logoImage = null;
   let logoDataUrl = null;
   let logoFileName = '';
   let logoFileSize = 0;
   let liveMode = false;
-  let isGenerating = false;
 
-  // ---------- DOM ----------
   const $ = id => document.getElementById(id);
   const qrOutput = $('qrOutput');
   const placeholder = $('placeholder');
@@ -470,8 +472,8 @@
   const liveToggle = $('liveToggle');
   const modeStatus = $('modeStatus');
   const generateBtn = $('generateBtn');
+  const hiddenQrContainer = $('hiddenQrContainer');
 
-  // ---------- ERROR/SUCCESS HELPERS ----------
   function showError(msg) {
     errorBox.textContent = '⚠️ ' + msg;
     errorBox.classList.remove('hidden');
@@ -485,7 +487,6 @@
     setTimeout(() => successBox.classList.add('hidden'), 3000);
   }
 
-  // ---------- LIVE MODE ----------
   liveToggle.addEventListener('change', () => {
     liveMode = liveToggle.checked;
     if (liveMode) {
@@ -502,7 +503,6 @@
     }
   });
 
-  // ---------- TABS ----------
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -514,7 +514,6 @@
     });
   });
 
-  // ---------- BUILD QR DATA ----------
   function buildQRData() {
     switch (currentType) {
       case 'text':
@@ -580,104 +579,107 @@
     return '';
   }
 
-  // ---------- MAIN GENERATE ----------
-  function generateNow() {
-    if (isGenerating) return;
-    isGenerating = true;
-    clearError();
-
-    try {
-      const data = buildQRData();
-
-      if (!data) {
-        showError('Pehle data bharo — kuch text ya details daalo.');
-        placeholder.classList.remove('hidden');
-        qrOutput.classList.add('hidden');
-        downloadOptions.classList.add('hidden');
-        isGenerating = false;
-        return;
-      }
-
-      if (typeof QRCode === 'undefined') {
-        showError('QR library load nahi hui. Internet check karo aur page refresh karo.');
-        isGenerating = false;
-        return;
-      }
-
-      const size = parseInt($('qrSize').value) || 500;
-      const fg = $('fgColor').value || '#000000';
-      const bg = $('bgColor').value || '#ffffff';
-      const level = logoImage ? 'H' : ($('errorLevel').value || 'H');
-
-      // STEP 1: Generate raw QR to a temp canvas using toCanvas on offscreen canvas
-      const tempCanvas = document.createElement('canvas');
-
-      QRCode.toCanvas(tempCanvas, data, {
-        width: size,
-        margin: 2,
-        color: { dark: fg, light: bg },
-        errorCorrectionLevel: level
-      }, function(err) {
-        if (err) {
-          console.error('QR Error:', err);
-          showError('QR generate nahi hua: ' + (err.message || err));
-          isGenerating = false;
-          return;
-        }
-
-        try {
-          // STEP 2: Apply style extras (rounded/dots) on temp canvas
-          const finalCanvas = applyStyles(tempCanvas, fg, bg);
-
-          // STEP 3: Draw logo on final canvas
-          if (logoImage) {
-            drawLogo(finalCanvas, logoImage);
-          }
-
-          // STEP 4: Convert to data URL and show in <img>
-          const dataUrl = finalCanvas.toDataURL('image/png');
-          qrOutput.src = dataUrl;
-          qrOutput.classList.remove('hidden');
-          placeholder.classList.add('hidden');
-          downloadOptions.classList.remove('hidden');
-
-          // store for download
-          window.__lastQRCanvas = finalCanvas;
-
-          showSuccess();
-          generateBtn.classList.remove('pulse');
-        } catch (e) {
-          console.error('Post-process error:', e);
-          // fallback: show plain QR
-          try {
-            const fallback = tempCanvas.toDataURL('image/png');
-            qrOutput.src = fallback;
-            qrOutput.classList.remove('hidden');
-            placeholder.classList.add('hidden');
-            downloadOptions.classList.remove('hidden');
-            window.__lastQRCanvas = tempCanvas;
-            showError('Style apply nahi hua, plain QR dikhaya.');
-          } catch (e2) {
-            showError('QR ban gaya par display fail: ' + e2.message);
-          }
-        } finally {
-          isGenerating = false;
-        }
-      });
-    } catch (e) {
-      console.error('Generate error:', e);
-      showError('Error: ' + e.message);
-      isGenerating = false;
+  function getCorrectLevel(lvl) {
+    if (typeof QRCode === 'undefined') return 2;
+    switch(lvl) {
+      case 'L': return QRCode.CorrectLevel.L;
+      case 'M': return QRCode.CorrectLevel.M;
+      case 'Q': return QRCode.CorrectLevel.Q;
+      case 'H':
+      default:
+        return QRCode.CorrectLevel.H;
     }
   }
 
-  // ---------- STYLE APPLY ----------
+  function generateNow() {
+    clearError();
+
+    const data = buildQRData();
+    if (!data) {
+      showError('Pehle data bharo — details daalo.');
+      placeholder.classList.remove('hidden');
+      qrOutput.classList.add('hidden');
+      downloadOptions.classList.add('hidden');
+      return;
+    }
+
+    if (typeof QRCode === 'undefined') {
+      showError('QR Code library load nahi hui. Check karein internet connected hai.');
+      return;
+    }
+
+    const size = parseInt($('qrSize').value) || 500;
+    const fg = $('fgColor').value || '#000000';
+    const bg = $('bgColor').value || '#ffffff';
+    const levelKey = logoImage ? 'H' : ($('errorLevel').value || 'H');
+    const correctLevel = getCorrectLevel(levelKey);
+
+    // Offscreen render container saaf karein
+    hiddenQrContainer.innerHTML = '';
+
+    try {
+      new QRCode(hiddenQrContainer, {
+        text: data,
+        width: size,
+        height: size,
+        colorDark: fg,
+        colorLight: bg,
+        correctLevel: correctLevel
+      });
+
+      // qrcodejs creates either a canvas or img
+      setTimeout(() => {
+        let srcCanvas = hiddenQrContainer.querySelector('canvas');
+        if (!srcCanvas) {
+          const rawImg = hiddenQrContainer.querySelector('img');
+          if (rawImg && rawImg.src) {
+            srcCanvas = document.createElement('canvas');
+            srcCanvas.width = size;
+            srcCanvas.height = size;
+            const c = srcCanvas.getContext('2d');
+            c.drawImage(rawImg, 0, 0, size, size);
+          }
+        }
+
+        if (!srcCanvas) {
+          showError('QR canvas generate karne me problem aayi.');
+          return;
+        }
+
+        // Apply visual styling (dots/eyes)
+        const finalCanvas = applyStyles(srcCanvas, fg, bg);
+
+        // Draw center logo
+        if (logoImage) {
+          drawLogo(finalCanvas, logoImage);
+        }
+
+        const dataUrl = finalCanvas.toDataURL('image/png');
+        qrOutput.src = dataUrl;
+        qrOutput.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+        downloadOptions.classList.remove('hidden');
+
+        window.__lastQRCanvas = finalCanvas;
+        showSuccess();
+        generateBtn.classList.remove('pulse');
+      }, 50);
+
+    } catch (e) {
+      showError('Error: ' + e.message);
+    }
+  }
+
   function applyStyles(srcCanvas, fg, bg) {
     const eyeStyle = $('eyeStyle').value;
     const dotStyle = $('dotStyle').value;
 
     if (eyeStyle === 'square' && dotStyle === 'square') {
-      return srcCanvas;
+      const copy = document.createElement('canvas');
+      copy.width = srcCanvas.width;
+      copy.height = srcCanvas.height;
+      copy.getContext('2d').drawImage(srcCanvas, 0, 0);
+      return copy;
     }
 
     const W = srcCanvas.width;
@@ -689,8 +691,6 @@
     const srcCtx = srcCanvas.getContext('2d');
     const srcData = srcCtx.getImageData(0, 0, W, W).data;
 
-    // detect module size from top-left finder pattern
-    // scan a horizontal line at y = 10% of W
     let mod = 0;
     const scanY = Math.floor(W * 0.1);
     let runStart = -1;
@@ -700,30 +700,32 @@
       if (dark && runStart === -1) runStart = x;
       if (!dark && runStart !== -1) {
         const run = x - runStart;
-        if (run > 2 && run < W / 8) { mod = run; break; }
+        if (run > 2 && run < W / 6) { mod = run; break; }
         runStart = -1;
       }
     }
-    if (mod < 3) return srcCanvas;
+    if (mod < 3) {
+      const fallback = document.createElement('canvas');
+      fallback.width = W; fallback.height = W;
+      fallback.getContext('2d').drawImage(srcCanvas, 0, 0);
+      return fallback;
+    }
 
-    const margin = 2 * mod;
-    const gridSize = Math.round((W - 2 * margin) / mod);
-    if (gridSize < 10 || gridSize > 200) return srcCanvas;
+    const margin = 0;
+    const gridSize = Math.round(W / mod);
 
-    // read grid
     const grid = [];
     for (let row = 0; row < gridSize; row++) {
       const r = [];
       for (let col = 0; col < gridSize; col++) {
-        const px = Math.floor(margin + col * mod + mod / 2);
-        const py = Math.floor(margin + row * mod + mod / 2);
+        const px = Math.min(W - 1, Math.floor(col * mod + mod / 2));
+        const py = Math.min(W - 1, Math.floor(row * mod + mod / 2));
         const idx = (py * W + px) * 4;
         r.push(srcData[idx] < 128 ? 1 : 0);
       }
       grid.push(r);
     }
 
-    // logo skip zone
     let skipL = -1, skipR = -1, skipT = -1, skipB = -1;
     if (logoImage) {
       const pct = parseInt($('logoSizeRange').value) / 100;
@@ -740,19 +742,17 @@
       (r < 7 && c >= gridSize - 7) ||
       (r >= gridSize - 7 && c < 7);
 
-    // fill background
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, W);
 
-    // draw data modules
     ctx.fillStyle = fg;
     const radius = dotStyle === 'rounded' ? mod * 0.35 : 0;
 
     for (let row = 0; row < gridSize; row++) {
       for (let col = 0; col < gridSize; col++) {
         if (!grid[row][col]) continue;
-        const x = margin + col * mod;
-        const y = margin + row * mod;
+        const x = col * mod;
+        const y = row * mod;
         const cx = x + mod / 2;
         const cy = y + mod / 2;
 
@@ -772,9 +772,8 @@
       }
     }
 
-    // draw eyes
     [[0, 0], [0, gridSize - 7], [gridSize - 7, 0]].forEach(([r0, c0]) => {
-      drawEye(ctx, margin, mod, r0, c0, eyeStyle, fg, bg);
+      drawEye(ctx, mod, r0, c0, eyeStyle, fg, bg);
     });
 
     return out;
@@ -795,9 +794,9 @@
     ctx.closePath();
   }
 
-  function drawEye(ctx, margin, mod, r0, c0, style, fg, bg) {
-    const x = margin + c0 * mod;
-    const y = margin + r0 * mod;
+  function drawEye(ctx, mod, r0, c0, style, fg, bg) {
+    const x = c0 * mod;
+    const y = r0 * mod;
     const S = 7 * mod;
 
     if (style === 'square') {
@@ -811,27 +810,22 @@
     }
 
     const rounded = style === 'rounded';
-
-    // outer
     ctx.fillStyle = fg;
     if (rounded) roundRect(ctx, x, y, S, S, S * 0.15);
     else { ctx.beginPath(); ctx.arc(x + S/2, y + S/2, S/2, 0, Math.PI * 2); }
     ctx.fill();
 
-    // middle white
     ctx.fillStyle = bg;
     if (rounded) roundRect(ctx, x + mod, y + mod, S - 2*mod, S - 2*mod, (S - 2*mod) * 0.15);
     else { ctx.beginPath(); ctx.arc(x + S/2, y + S/2, (S - 2*mod)/2, 0, Math.PI * 2); }
     ctx.fill();
 
-    // inner dark
     ctx.fillStyle = fg;
     if (rounded) roundRect(ctx, x + 2*mod, y + 2*mod, 3*mod, 3*mod, 3*mod * 0.15);
     else { ctx.beginPath(); ctx.arc(x + S/2, y + S/2, (3*mod)/2, 0, Math.PI * 2); }
     ctx.fill();
   }
 
-  // ---------- LOGO DRAW ----------
   function drawLogo(canvas, img) {
     const ctx = canvas.getContext('2d');
     const W = canvas.width;
@@ -859,12 +853,8 @@
     ctx.drawImage(img, lx, ly, lw, lh);
   }
 
-  // ---------- GENERATE BUTTON ----------
-  generateBtn.addEventListener('click', () => {
-    generateNow();
-  });
+  generateBtn.addEventListener('click', generateNow);
 
-  // ---------- LIVE BINDING ----------
   function scheduleIfLive() {
     if (liveMode) generateNow();
   }
@@ -888,11 +878,10 @@
   $('logoSizeRange').addEventListener('input', () => { $('logoSizeLabel').textContent = $('logoSizeRange').value + '%'; });
   $('logoPadRange').addEventListener('input', () => { $('logoPadLabel').textContent = $('logoPadRange').value + 'px'; });
 
-  // ---------- LOGO UPLOAD ----------
   function handleLogoFile(file) {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      showError('Sirf image file (PNG/JPG/SVG/GIF/WebP) select karo.');
+      showError('Sirf image file select karo.');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
@@ -917,7 +906,6 @@
           generateNow();
         }
       };
-      img.onerror = () => showError('Image load nahi hui. Doosri file try karo.');
       img.src = logoDataUrl;
     };
     reader.readAsDataURL(file);
@@ -960,7 +948,6 @@
     if (!qrOutput.classList.contains('hidden') || liveMode) generateNow();
   });
 
-  // ---------- DOWNLOADS ----------
   $('downloadPng').addEventListener('click', () => {
     const canvas = window.__lastQRCanvas;
     if (!canvas) return;
@@ -1001,7 +988,6 @@
     setTimeout(() => URL.revokeObjectURL(url), 2000);
   });
 
-  // ---------- INIT ----------
   $('qrSizeLabel').textContent = $('qrSize').value;
   $('logoSizeLabel').textContent = $('logoSizeRange').value + '%';
   $('logoPadLabel').textContent = $('logoPadRange').value + 'px';
